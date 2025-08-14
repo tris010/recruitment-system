@@ -1,0 +1,43 @@
+
+// Use a REST client extension or curl to try these
+
+### Create Job
+POST http://127.0.0.1:8000/jobs
+Content-Type: application/json
+
+{
+  "title": "Data Scientist",
+  "description": "Strong in Python, ML, NLP",
+  "skills": "python, machine learning, nlp, sql"
+}
+
+### List Jobs
+GET http://127.0.0.1:8000/jobs
+
+### Create Candidate (text)
+POST http://127.0.0.1:8000/candidates
+Content-Type: application/json
+
+{
+  "name": "Avani Khemka",
+  "email": "avani@example.com",
+  "resume_text": "Python, ML, NLP, FastAPI; Built tf-idf matcher."
+}
+
+### List Candidates
+GET http://127.0.0.1:8000/candidates
+
+### Add Experts
+POST http://127.0.0.1:8000/experts
+Content-Type: application/json
+
+{"name": "Dr. Rao", "email": "rao@example.com", "skills": "nlp, machine learning, python"}
+
+### Match for Job 1
+POST http://127.0.0.1:8000/match/1
+
+### Get Matches
+GET http://127.0.0.1:8000/matches/1
+
+### Schedule
+POST http://127.0.0.1:8000/schedule/1

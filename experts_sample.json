@@ -1,0 +1,5 @@
+
+[
+  {"name": "Dr. Rao", "email": "rao@example.com", "skills": "nlp, machine learning, python"},
+  {"name": "Ms. Sharma", "email": "sharma@example.com", "skills": "data engineering, spark, sql"}
+]

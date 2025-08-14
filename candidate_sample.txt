@@ -1,0 +1,5 @@
+
+Avani Khemka
+Email: avani@example.com
+Skills: Python, Machine Learning, SQL, NLP, FastAPI
+Experience: Built recruitment matching engine using TF-IDF and cosine similarity.
