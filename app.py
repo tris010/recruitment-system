@@ -16,6 +16,11 @@ from .scheduler import pick_best_expert
 
 Base.metadata.create_all(bind=engine)
 
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+
+# ... imports ...
+
 app = FastAPI(title="Automated Recruitment System (MVP)")
 
 app.add_middleware(
@@ -26,7 +31,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Serve static files
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
 @app.get("/", tags=["health"])
+def read_index():
+    return FileResponse('static/index.html')
+
+@app.get("/health", tags=["health"])
 def health():
     return {"status": "ok"}
 
@@ -61,7 +73,8 @@ async def create_candidate_with_file(
     file: UploadFile = File(...),
     db: Session = Depends(get_db)
 ):
-    temp_dir = "uploads"
+    # Use /tmp for Vercel
+    temp_dir = "/tmp/uploads"
     os.makedirs(temp_dir, exist_ok=True)
     temp_path = os.path.join(temp_dir, file.filename)
     with open(temp_path, "wb") as f:
@@ -139,7 +152,12 @@ def schedule_interview(job_id: int, db: Session = Depends(get_db)):
 
     experts = db.query(Expert).all()
     if not experts:
-        raise HTTPException(400, "No experts available. Add via POST /experts.")
+        # Create a dummy expert if none exist, just for demo
+        dummy_expert = Expert(name="System Auto-Expert", email="bot@system.com", skills=job.skills)
+        db.add(dummy_expert)
+        db.commit()
+        db.refresh(dummy_expert)
+        experts = [dummy_expert]
 
     best_expert_id = pick_best_expert((job.skills or "").split(","), [(e.id, e.skills or "") for e in experts])
     if not best_expert_id:

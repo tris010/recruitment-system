@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recruitment System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen p-8">
+    <div class="max-w-4xl mx-auto bg-white shadow-lg rounded-lg p-6">
+        <h1 class="text-3xl font-bold mb-6 text-center text-blue-600">Recruitment Automation System</h1>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Job Posting -->
+            <div class="border p-4 rounded bg-gray-50">
+                <h2 class="text-xl font-semibold mb-4">Post a Job</h2>
+                <form id="jobForm" class="space-y-3">
+                    <input type="text" id="jobTitle" placeholder="Job Title" class="w-full p-2 border rounded" required>
+                    <textarea id="jobDesc" placeholder="Description" class="w-full p-2 border rounded" required></textarea>
+                    <input type="text" id="jobSkills" placeholder="Skills (comma separated)" class="w-full p-2 border rounded">
+                    <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Create Job</button>
+                </form>
+                <div id="jobResult" class="mt-2 text-sm text-green-600"></div>
+            </div>
+
+            <!-- Candidate Upload -->
+            <div class="border p-4 rounded bg-gray-50">
+                <h2 class="text-xl font-semibold mb-4">Upload Resume</h2>
+                <form id="candidateForm" class="space-y-3">
+                    <input type="text" id="candName" placeholder="Candidate Name" class="w-full p-2 border rounded" required>
+                    <input type="email" id="candEmail" placeholder="Email" class="w-full p-2 border rounded" required>
+                    <input type="file" id="candFile" class="w-full p-2 border rounded" required>
+                    <button type="submit" class="w-full bg-green-500 text-white p-2 rounded hover:bg-green-600">Upload Candidate</button>
+                </form>
+                <div id="candResult" class="mt-2 text-sm text-green-600"></div>
+            </div>
+        </div>
+
+        <div class="mt-8">
+            <h2 class="text-xl font-semibold mb-4">Actions</h2>
+            <div class="flex gap-4">
+                <select id="jobSelect" class="p-2 border rounded flex-grow">
+                    <option value="">Select a Job to Match...</option>
+                </select>
+                <button onclick="runMatch()" class="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600">Run Match</button>
+                <button onclick="scheduleInterview()" class="bg-orange-500 text-white px-4 py-2 rounded hover:bg-orange-600">Schedule Interview</button>
+            </div>
+        </div>
+
+        <div id="resultsArea" class="mt-8 hidden">
+            <h3 class="text-lg font-bold mb-2">Results</h3>
+            <pre id="output" class="bg-gray-800 text-white p-4 rounded overflow-auto max-h-60"></pre>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = "";
+
+        async function loadJobs() {
+            try {
+                const res = await fetch(`${API_URL}/jobs`);
+                const jobs = await res.json();
+                const select = document.getElementById('jobSelect');
+                select.innerHTML = '<option value="">Select a Job to Match...</option>';
+                jobs.forEach(job => {
+                    const opt = document.createElement('option');
+                    opt.value = job.id;
+                    opt.textContent = `${job.title} (ID: ${job.id})`;
+                    select.appendChild(opt);
+                });
+            } catch (e) {
+                console.error("Error loading jobs", e);
+            }
+        }
+
+        document.getElementById('jobForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const data = {
+                title: document.getElementById('jobTitle').value,
+                description: document.getElementById('jobDesc').value,
+                skills: document.getElementById('jobSkills').value
+            };
+            const res = await fetch(`${API_URL}/jobs`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data)
+            });
+            const json = await res.json();
+            document.getElementById('jobResult').textContent = `Job created: ID ${json.id}`;
+            loadJobs();
+        });
+
+        document.getElementById('candidateForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData();
+            formData.append('name', document.getElementById('candName').value);
+            formData.append('email', document.getElementById('candEmail').value);
+            formData.append('file', document.getElementById('candFile').files[0]);
+
+            const res = await fetch(`${API_URL}/candidates/upload`, {
+                method: 'POST',
+                body: formData
+            });
+            const json = await res.json();
+            document.getElementById('candResult').textContent = `Candidate added: ID ${json.id}`;
+        });
+
+        async function runMatch() {
+            const jobId = document.getElementById('jobSelect').value;
+            if (!jobId) return alert("Select a job first");
+            
+            const res = await fetch(`${API_URL}/match/${jobId}`, { method: 'POST' });
+            const json = await res.json();
+            displayOutput(json);
+        }
+
+        async function scheduleInterview() {
+            const jobId = document.getElementById('jobSelect').value;
+            if (!jobId) return alert("Select a job first");
+            
+            try {
+                const res = await fetch(`${API_URL}/schedule/${jobId}`, { method: 'POST' });
+                const json = await res.json();
+                displayOutput(json);
+            } catch (e) {
+                displayOutput({error: "Failed. Run match first or define experts."});
+            }
+        }
+
+        function displayOutput(data) {
+            const area = document.getElementById('resultsArea');
+            area.classList.remove('hidden');
+            document.getElementById('output').textContent = JSON.stringify(data, null, 2);
+        }
+
+        // Init
+        loadJobs();
+    </script>
+</body>
+</html>
