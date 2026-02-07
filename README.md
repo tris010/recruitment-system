@@ -1,43 +1,77 @@
+# 🚀 Recruitment Automation System
 
-# Automated Recruitment System (MVP)
+An end-to-end recruitment automation platform designed to streamline the hiring process by extracting resumes, evaluating candidate relevance using AI/ML techniques, and automating interview scheduling.  
+This project was developed as part of **Smart India Hackathon (SIH)** for **DRDO**, focusing on improving recruitment efficiency and accuracy.
 
-A minimal FastAPI-based system that:
-- Ingests jobs, candidates, and interviewers
-- Parses resumes (PDF/DOCX/TXT)
-- Computes role relevancy scores (TF–IDF + cosine similarity)
-- Auto-creates an interview schedule with the best-matching interviewer
+---
 
-## Quickstart
+## 📌 Problem Statement
 
-```bash
-# 1) Create & activate a virtual env (optional but recommended)
-python -m venv .venv
-source .venv/bin/activate  # Windows: .venv\Scripts\activate
+Traditional recruitment processes involve:
+- Manual resume screening  
+- Subjective candidate evaluation  
+- Time-consuming interview scheduling  
 
-# 2) Install deps
-pip install -r requirements.txt
+These steps are inefficient, error-prone, and difficult to scale for large applicant pools.
 
-# 3) Run the API
-uvicorn src.app:app --reload
+---
 
-# 4) Open docs
-# Swagger UI: http://127.0.0.1:8000/docs
-# ReDoc:      http://127.0.0.1:8000/redoc
-```
+## 💡 Solution
 
-## API Highlights
-- `POST /jobs` – create a job
-- `POST /candidates` – create a candidate (upload resume file or paste text)
-- `POST /experts` – add interviewers with skills
-- `POST /match/{job_id}` – compute relevancy scores for all candidates for a job
-- `POST /schedule/{job_id}` – schedule top candidate with best matching interviewer
-- `GET /matches/{job_id}` – list matches sorted by score desc
+This system automates the complete recruitment pipeline by:
+- Extracting and preprocessing resumes
+- Scoring candidates based on relevance to job requirements
+- Ranking candidates objectively
+- Scheduling interviews with relevant domain experts
 
-## Data Model (SQLite)
-- **Job**: id, title, description, skills (csv)
-- **Candidate**: id, name, email, resume_text
-- **Expert**: id, name, email, skills (csv)
-- **Match**: id, job_id, candidate_id, score
-- **Interview**: id, job_id, candidate_id, expert_id, slot
+---
 
-> This is a hackathon-friendly MVP: simple, readable, and easy to extend.
+## 🧠 Key Features
+
+- **Resume Parsing**  
+  Extracts structured information such as skills, education, and experience from resumes.
+
+- **Relevancy Scoring Engine**  
+  Matches candidate profiles with job descriptions and generates a relevance score.
+
+- **Automated Shortlisting**  
+  Ranks candidates based on relevance scores.
+
+- **Interview Scheduling**  
+  Assigns shortlisted candidates to experts based on domain relevance.
+
+- **Scalable Architecture**  
+  Designed to handle large volumes of applicants efficiently.
+
+---
+
+## 🛠️ Tech Stack
+
+- **Language**: Python  
+- **Concepts**:
+  - Machine Learning
+  - Natural Language Processing (NLP)
+- **Libraries**:
+  - Pandas
+  - NumPy
+- **Core Logic**:
+  - Resume parsing
+  - Skill matching
+  - Relevance scoring
+
+---
+
+## ⚙️ System Workflow
+
+1. Upload candidate resumes  
+2. Extract and preprocess resume data  
+3. Compare candidate skills with job requirements  
+4. Generate relevancy scores  
+5. Rank candidates  
+6. Schedule interviews with relevant experts  
+
+---
+
+## 📂 Project Structure
+
+
