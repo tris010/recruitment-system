@@ -4,17 +4,28 @@ from datetime import datetime, timedelta
 from typing import List
 
 from fastapi import FastAPI, Depends, UploadFile, File, Form, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy.orm import Session
+import logging
+import sys
 
-from db import Base, engine, get_db
-from models import Job, Candidate, Expert, Match, Interview
-from schemas import JobIn, JobOut, CandidateIn, CandidateOut, ExpertIn, ExpertOut, MatchOut, InterviewOut
-from utils.resume_parser import parse_resume
-from utils.scorer import rank_candidates
-from scheduler import pick_best_expert
+# Configure logging to stderr for Vercel
+logging.basicConfig(stream=sys.stderr, level=logging.INFO)
+logger = logging.getLogger("app")
 
-Base.metadata.create_all(bind=engine)
+try:
+    from db import Base, engine, get_db
+    from models import Job, Candidate, Expert, Match, Interview
+    from schemas import JobIn, JobOut, CandidateIn, CandidateOut, ExpertIn, ExpertOut, MatchOut, InterviewOut
+    from utils.resume_parser import parse_resume
+    from utils.scorer import rank_candidates
+    from scheduler import pick_best_expert
+    
+    logger.info("Attempting to create database tables...")
+    Base.metadata.create_all(bind=engine)
+    logger.info("Database tables created successfully.")
+except Exception as e:
+    logger.error(f"CRITICAL STARTUP ERROR: {e}")
+    # Continue so we can serve /health and debug
+
 
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
