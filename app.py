@@ -15,9 +15,9 @@ try:
     from db import Base, engine, get_db
     from models import Job, Candidate, Expert, Match, Interview
     from schemas import JobIn, JobOut, CandidateIn, CandidateOut, ExpertIn, ExpertOut, MatchOut, InterviewOut
-    from utils.resume_parser import parse_resume
-    from utils.scorer import rank_candidates
-    from scheduler import pick_best_expert
+    # from utils.resume_parser import parse_resume
+    # from utils.scorer import rank_candidates
+    # from scheduler import pick_best_expert
     
     logger.info("Attempting to create database tables...")
     Base.metadata.create_all(bind=engine)
@@ -90,7 +90,8 @@ async def create_candidate_with_file(
     temp_path = os.path.join(temp_dir, file.filename)
     with open(temp_path, "wb") as f:
         f.write(await file.read())
-    text = parse_resume(temp_path)
+    # text = parse_resume(temp_path)
+    text = "DUMMY TEXT FOR DEBUGGING"
     if not text.strip():
         raise HTTPException(400, "Could not extract text from the uploaded resume.")
     cand = Candidate(name=name, email=email, resume_text=text)
@@ -129,7 +130,8 @@ def match_candidates(job_id: int, db: Session = Depends(get_db)):
 
     job_text = f"{job.title}\n{job.description}\nSkills: {job.skills}"
     pairs = [(c.id, c.resume_text) for c in cands]
-    ranked = rank_candidates(job_text, pairs)
+    # ranked = rank_candidates(job_text, pairs)
+    ranked = [(c.id, 0.5) for c in cands] # Dummy rank
 
     # Clear old matches for this job
     db.query(Match).filter(Match.job_id == job_id).delete()
@@ -170,7 +172,8 @@ def schedule_interview(job_id: int, db: Session = Depends(get_db)):
         db.refresh(dummy_expert)
         experts = [dummy_expert]
 
-    best_expert_id = pick_best_expert((job.skills or "").split(","), [(e.id, e.skills or "") for e in experts])
+    # best_expert_id = pick_best_expert((job.skills or "").split(","), [(e.id, e.skills or "") for e in experts])
+    best_expert_id = experts[0].id
     if not best_expert_id:
         best_expert_id = experts[0].id
 
