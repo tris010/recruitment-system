@@ -41,11 +41,11 @@ app.add_middleware(
 )
 
 # Serve static files
-app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/static", StaticFiles(directory="../frontend/static"), name="static")
 
 @app.get("/", tags=["health"])
 def read_index():
-    return FileResponse('static/index.html')
+    return FileResponse('../frontend/static/index.html')
 
 @app.get("/health", tags=["health"])
 def health():
