@@ -1,7 +1,7 @@
 
 from sqlalchemy import Column, Integer, String, Float, ForeignKey
 from sqlalchemy.orm import relationship
-from .db import Base
+from db import Base
 
 class Job(Base):
     __tablename__ = "jobs"

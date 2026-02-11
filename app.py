@@ -7,12 +7,12 @@ from fastapi import FastAPI, Depends, UploadFile, File, Form, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
-from .db import Base, engine, get_db
-from .models import Job, Candidate, Expert, Match, Interview
-from .schemas import JobIn, JobOut, CandidateIn, CandidateOut, ExpertIn, ExpertOut, MatchOut, InterviewOut
-from .utils.resume_parser import parse_resume
-from .utils.scorer import rank_candidates
-from .scheduler import pick_best_expert
+from db import Base, engine, get_db
+from models import Job, Candidate, Expert, Match, Interview
+from schemas import JobIn, JobOut, CandidateIn, CandidateOut, ExpertIn, ExpertOut, MatchOut, InterviewOut
+from utils.resume_parser import parse_resume
+from utils.scorer import rank_candidates
+from scheduler import pick_best_expert
 
 Base.metadata.create_all(bind=engine)
 

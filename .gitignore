@@ -57,3 +57,5 @@ ENV/
 
 # SQLite DB
 app.db
+.vercel
+.env*.local

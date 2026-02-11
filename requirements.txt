@@ -1,11 +1,7 @@
-
 fastapi
 uvicorn
 pydantic>=2
 sqlalchemy>=2
 python-multipart
-pandas
-numpy
-scikit-learn
 PyPDF2
 python-docx
