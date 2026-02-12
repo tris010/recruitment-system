@@ -43,7 +43,23 @@ app.add_middleware(
 # Serve static files
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 STATIC_DIR = os.path.join(BASE_DIR, "static")
-app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+
+if os.path.exists(STATIC_DIR):
+    app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+else:
+    logger.warning(f"Static directory not found at {STATIC_DIR}")
+
+@app.get("/debug")
+def debug_info():
+    import os
+    return {
+        "cwd": os.getcwd(),
+        "base_dir": BASE_DIR,
+        "static_dir": STATIC_DIR,
+        "static_exists": os.path.exists(STATIC_DIR),
+        "files_in_base": os.listdir(BASE_DIR) if os.path.exists(BASE_DIR) else [],
+        "files_in_static": os.listdir(STATIC_DIR) if os.path.exists(STATIC_DIR) else []
+    }
 
 @app.get("/", tags=["health"])
 def read_index():
