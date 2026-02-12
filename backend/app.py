@@ -15,6 +15,9 @@ from fastapi.responses import FileResponse
 logging.basicConfig(stream=sys.stderr, level=logging.INFO)
 logger = logging.getLogger("app")
 
+# Ensure current directory is in sys.path for local imports
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
 try:
     from db import Base, engine, get_db
     from models import Job, Candidate, Expert, Match, Interview
